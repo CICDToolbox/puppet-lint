@@ -23,63 +23,24 @@ set -Eeuo pipefail
 # EXIT_VALUE - Used to store the script exit value - adjusted by the fail().       #
 # -------------------------------------------------------------------------------- #
 
+INSTALL_PACKAGE='puppet-lint'
 TEST_COMMAND='puppet-lint'
 FILE_TYPE_SEARCH_PATTERN='No Magic Pattern'
 FILE_NAME_SEARCH_PATTERN='\.pp$'
 EXIT_VALUE=0
 
 # -------------------------------------------------------------------------------- #
-# Success                                                                          #
+# Install                                                                          #
 # -------------------------------------------------------------------------------- #
-# Show the user that the processing of a specific file was successful.             #
+# Install the required tooling.                                                    #
 # -------------------------------------------------------------------------------- #
 
-function success()
+function install_prerequisites
 {
-    local message="${1:-}"
+    gem install "${INSTALL_PACKAGE}"
 
-    if [[ -n "${message}" ]]; then
-        printf ' [  %s%sOK%s  ] Processing successful for %s\n' "${bold}" "${success}" "${normal}" "${message}"
-    fi
-}
-
-# -------------------------------------------------------------------------------- #
-# Fail                                                                             #
-# -------------------------------------------------------------------------------- #
-# Show the user that the processing of a specific file failed and adjust the       #
-# EXIT_VALUE to record this.                                                       #
-# -------------------------------------------------------------------------------- #
-
-function fail()
-{
-    local message="${1:-}"
-    local errors="${2:-}"
-
-    if [[ -n "${message}" ]]; then
-        printf ' [ %s%sFAIL%s ] Processing failed for %s\n' "${bold}" "${error}" "${normal}" "${message}"
-    fi
-
-    if [[ -n "${errors}" ]]; then
-        echo "${errors}"
-    fi
-
-    EXIT_VALUE=1
-}
-
-# -------------------------------------------------------------------------------- #
-# Skip                                                                             #
-# -------------------------------------------------------------------------------- #
-# Show the user that the processing of a specific file was skipped.                #
-# -------------------------------------------------------------------------------- #
-
-function skip()
-{
-    local message="${1:-}"
-
-    file_count=$((file_count+1))
-    if [[ -n "${message}" ]]; then
-        printf ' [ %s%sSkip%s ] Skipping %s\n' "${bold}" "${skip}" "${normal}" "${message}"
-    fi
+    VERSION=$(gem list | grep "^${INSTALL_PACKAGE} " | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
+    BANNER="Scanning all puppet code with ${INSTALL_PACKAGE} (version: ${VERSION})"
 }
 
 # -------------------------------------------------------------------------------- #
@@ -121,6 +82,99 @@ function scan_files()
     done < <(git ls-files | sort -zVd)
 }
 
+# -------------------------------------------------------------------------------- #
+# Handle Parameters                                                                #
+# -------------------------------------------------------------------------------- #
+# Handle any parameters from the pipeline.                                         #
+# -------------------------------------------------------------------------------- #
+
+function handle_parameters
+{
+    if [[ -n "${SHOW_ERRORS-}" ]]; then
+        if [[ "${SHOW_ERRORS}" != true ]]; then
+            SHOW_ERRORS=false
+        fi
+    else
+        SHOW_ERRORS=false
+    fi
+
+    if [[ -n "${REPORT_ONLY-}" ]]; then
+        if [[ "${REPORT_ONLY}" != true ]]; then
+            REPORT_ONLY=false
+        fi
+    else
+        REPORT_ONLY=false
+    fi
+
+    if [[ "${REPORT_ONLY}" == true ]]; then
+        center_text "WARNING: REPORT ONLY MODE"
+        draw_line
+    fi
+}
+
+
+# -------------------------------------------------------------------------------- #
+# Success                                                                          #
+# -------------------------------------------------------------------------------- #
+# Show the user that the processing of a specific file was successful.             #
+# -------------------------------------------------------------------------------- #
+
+function success()
+{
+    local message="${1:-}"
+
+    if [[ -n "${message}" ]]; then
+        printf ' [  %s%sOK%s  ] Processing successful for %s\n' "${bold}" "${success}" "${normal}" "${message}"
+    fi
+}
+
+# -------------------------------------------------------------------------------- #
+# Fail                                                                             #
+# -------------------------------------------------------------------------------- #
+# Show the user that the processing of a specific file failed and adjust the       #
+# EXIT_VALUE to record this.                                                       #
+# -------------------------------------------------------------------------------- #
+
+function fail()
+{
+    local message="${1:-}"
+    local errors="${2:-}"
+
+    if [[ -n "${message}" ]]; then
+        printf ' [ %s%sFAIL%s ] Processing failed for %s\n' "${bold}" "${error}" "${normal}" "${message}"
+    fi
+
+    if [[ "${SHOW_ERRORS}" == true ]]; then
+        if [[ -n "${errors}" ]]; then
+            echo "${errors}"
+        fi
+    fi
+
+    EXIT_VALUE=1
+}
+
+# -------------------------------------------------------------------------------- #
+# Skip                                                                             #
+# -------------------------------------------------------------------------------- #
+# Show the user that the processing of a specific file was skipped.                #
+# -------------------------------------------------------------------------------- #
+
+function skip()
+{
+    local message="${1:-}"
+
+    file_count=$((file_count+1))
+    if [[ -n "${message}" ]]; then
+        printf ' [ %s%sSkip%s ] Skipping %s\n' "${bold}" "${skip}" "${normal}" "${message}"
+    fi
+}
+
+# -------------------------------------------------------------------------------- #
+# Center Text                                                                      #
+# -------------------------------------------------------------------------------- #
+# Center the given string on the screen. Part of the report generation.            #
+# -------------------------------------------------------------------------------- #
+
 function center_text()
 {
     textsize=${#1}
@@ -129,10 +183,22 @@ function center_text()
     printf '%*s\n' "${span}" "$1"
 }
 
+# -------------------------------------------------------------------------------- #
+# Draw Line                                                                        #
+# -------------------------------------------------------------------------------- #
+# Draw a line on the screen. Part of the report generation.                        #
+# -------------------------------------------------------------------------------- #
+
 function draw_line
 {
     printf '%*s\n' "${screen_width}" '' | tr ' ' -
 }
+
+# -------------------------------------------------------------------------------- #
+# Header                                                                           #
+# -------------------------------------------------------------------------------- #
+# Draw the report header on the screen. Part of the report generation.             #
+# -------------------------------------------------------------------------------- #
 
 function header
 {
@@ -141,12 +207,24 @@ function header
     draw_line
 }
 
+# -------------------------------------------------------------------------------- #
+# Footer                                                                           #
+# -------------------------------------------------------------------------------- #
+# Draw the report footer on the screen. Part of the report generation.             #
+# -------------------------------------------------------------------------------- #
+
 function footer
 {
     draw_line
     center_text "Total: ${file_count}, OK: ${ok_count}, Failed: ${fail_count}, Skipped: $skip_count"
     draw_line
 }
+
+# -------------------------------------------------------------------------------- #
+# Setup                                                                            #
+# -------------------------------------------------------------------------------- #
+# Handle any custom setup that is required.                                        #
+# -------------------------------------------------------------------------------- #
 
 function setup
 {
@@ -166,22 +244,6 @@ function setup
 }
 
 # -------------------------------------------------------------------------------- #
-# Install                                                                          #
-# -------------------------------------------------------------------------------- #
-# Install the required tooling.                                                    #
-# -------------------------------------------------------------------------------- #
-
-function install_prerequisites
-{
-    local gem_name='puppet-lint'
-
-    gem install ${gem_name}
-
-    VERSION=$(gem list | grep "^${gem_name} " | sed 's/[^0-9.]*\([0-9.]*\).*/\1/')
-    BANNER="Scanning all puppet code with ${gem_name} (version: ${VERSION})"
-}
-
-# -------------------------------------------------------------------------------- #
 # Main()                                                                           #
 # -------------------------------------------------------------------------------- #
 # This is the actual 'script' and the functions/sub routines are called in order.  #
@@ -190,8 +252,13 @@ function install_prerequisites
 setup
 install_prerequisites
 header
+handle_parameters
 scan_files
 footer
+
+if [[ "${REPORT_ONLY}" == true ]]; then
+    EXIT_VALUE=0
+fi
 
 exit $EXIT_VALUE
 
