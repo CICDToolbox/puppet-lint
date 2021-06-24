@@ -177,10 +177,12 @@ function skip()
 
 function center_text()
 {
-    textsize=${#1}
+    local message="${1:-}"
+
+    textsize=${#message}
     span=$(((screen_width + textsize) / 2))
 
-    printf '%*s\n' "${span}" "$1"
+    printf '%*s\n' "${span}" "${message}"
 }
 
 # -------------------------------------------------------------------------------- #

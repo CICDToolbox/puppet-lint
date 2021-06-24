@@ -9,6 +9,8 @@ This changelog was automatically generated using [Caretaker](https://github.com/
 
 - testing [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
 
+- testing [`[b77fc9e]`](https://github.com/CICDToolbox/puppet-lint/commit/b77fc9e13050f682e2f92dead3481c816202c347)
+
 - testing [`[c57046d]`](https://github.com/CICDToolbox/puppet-lint/commit/c57046d0baca5da4f4129917e9720f45900e7682)
 
 - The initial commit [`[3c87e1d]`](https://github.com/CICDToolbox/puppet-lint/commit/3c87e1d1449531ee31c7977b3a3eed305fac2937)
