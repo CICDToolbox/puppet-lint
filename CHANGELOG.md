@@ -7,7 +7,9 @@ This changelog was automatically generated using [Caretaker](https://github.com/
 
 ### [Unreleased](https://github.com/CICDToolbox/puppet-lint/commits/master)
 
-- New logo [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
+- update readme [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
+
+- New logo [`[f0859cb]`](https://github.com/CICDToolbox/puppet-lint/commit/f0859cb93fedd603b531efcc8ca77c6fe8e7aeda)
 
 - update [`[4baea7b]`](https://github.com/CICDToolbox/puppet-lint/commit/4baea7b95dda06b372f53d730d16333b138aa879)
 
