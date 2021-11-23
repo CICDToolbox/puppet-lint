@@ -9,6 +9,8 @@ This changelog was automatically generated using [Caretaker](https://github.com/
 
 - Fix find command [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
 
+- Fix find command [`[fd9f5c7]`](https://github.com/CICDToolbox/puppet-lint/commit/fd9f5c7bdc5649608aee1b114170abbe04915e00)
+
 - Fix find command [`[77b0ae7]`](https://github.com/CICDToolbox/puppet-lint/commit/77b0ae770be99b322ccd4bf621ca04c5a708956c)
 
 - shellcheck [`[8c7dee5]`](https://github.com/CICDToolbox/puppet-lint/commit/8c7dee5bba647c3bf087ad4cb22a388dd43390c8)
