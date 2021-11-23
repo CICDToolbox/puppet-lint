@@ -7,7 +7,9 @@ This changelog was automatically generated using [Caretaker](https://github.com/
 
 ### [Unreleased](https://github.com/CICDToolbox/puppet-lint/commits/master)
 
-- shellcheck [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
+- Fix find command [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
+
+- shellcheck [`[8c7dee5]`](https://github.com/CICDToolbox/puppet-lint/commit/8c7dee5bba647c3bf087ad4cb22a388dd43390c8)
 
 - update readme [`[6b9c1d3]`](https://github.com/CICDToolbox/puppet-lint/commit/6b9c1d3ca0eefed834b059f029795a53e9dc7b27)
 
