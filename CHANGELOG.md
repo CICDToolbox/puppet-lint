@@ -7,7 +7,9 @@ This changelog was automatically generated using [Caretaker](https://github.com/
 
 ### [Unreleased](https://github.com/CICDToolbox/puppet-lint/commits/master)
 
-- Fix find command [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
+- Make errors easier to see and default to showing errors [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
+
+- Fix find command [`[d62dc76]`](https://github.com/CICDToolbox/puppet-lint/commit/d62dc76f19bd53b74c7a7cdd28f621a8b2be8a37)
 
 - Fix find command [`[fd9f5c7]`](https://github.com/CICDToolbox/puppet-lint/commit/fd9f5c7bdc5649608aee1b114170abbe04915e00)
 
