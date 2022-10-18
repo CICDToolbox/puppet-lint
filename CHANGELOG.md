@@ -7,7 +7,9 @@ This changelog was automatically generated using [Caretaker](https://github.com/
 
 ### [Unreleased](https://github.com/CICDToolbox/puppet-lint/commits/master)
 
-- Make errors easier to see and default to showing errors [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
+- Change the logic for skipping and showing skipped files [`[head]`](https://github.com/CICDToolbox/puppet-lint/commit/)
+
+- Make errors easier to see and default to showing errors [`[48ab2e7]`](https://github.com/CICDToolbox/puppet-lint/commit/48ab2e77316be9852ee05b8d53d0b48bf7c82fee)
 
 - Fix find command [`[d62dc76]`](https://github.com/CICDToolbox/puppet-lint/commit/d62dc76f19bd53b74c7a7cdd28f621a8b2be8a37)
 

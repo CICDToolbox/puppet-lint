@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: [ '2.6', '2.7', '3.0', 'head' ]
+        ruby: [ '2.7', '3.0', '3.1', 'head' ]
     name: Build Test on Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v2
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Ruby 3.0
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.0
+          ruby-version: 3.1
       - name: Run Awesomebot
         env:
           FLAGS: "default"
@@ -46,7 +46,7 @@ jobs:
       - name: Set up Ruby 3.0
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.0
+          ruby-version: 3.1
       - name: Run YAML-Lint
         run: bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/yaml-lint/master/pipeline.sh)
   slack-workflow-status:
