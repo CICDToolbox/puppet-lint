@@ -1,0 +1,81 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches-ignore:
+      - 'dependabot/**'
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.cff'
+
+  pull_request:
+    branches:
+      - '**'
+    paths-ignore:
+      - '**/*.md'
+      - '**/*.cff'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions: read-all
+
+jobs:
+  get-ruby-version:
+    name: Get Latest Ruby Version
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.get-language-versions.outputs.latest-versions }}
+
+    steps:
+      - name: Get Required Versions
+        uses: ActionsToolbox/get-language-versions-action@446919617fd774095b5dd3ed71c39dd3fd0d8f4f # v0.1.3
+        id: get-language-versions
+        with:
+          language: "ruby"
+          highest-only: true
+          remove-patch-version: true
+
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the Repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Perform ShellCheck Analysis
+        run: bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/shellcheck/master/pipeline.sh)
+
+  puppet-lint:
+    name: Puppet Lint
+    needs: get-ruby-version
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the Repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+      - name: Setup Ruby ${{ needs.get-ruby-version.outputs.version }}
+        uses: ruby/setup-ruby@cacc9f1c0b3f4eb8a16a6bb0ed10897b43b9de49 # v1.176.0
+        with:
+          ruby-version: ${{ needs.get-ruby-version.outputs.version }}
+
+      - name: Perform Puppet Lint Analysis
+        run: bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/puppet-lint/master/pipeline.sh)
+
+  cicd-pipeline:
+    if: always()
+    name: CI/CD Pipeline
+    needs:
+      - shellcheck
+      - puppet-lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the Repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29  # v4.1.6
+
+      - name: Check Job Statuses
+        run: .github/scripts/check-jobs.sh '${{ toJson(needs) }}'
