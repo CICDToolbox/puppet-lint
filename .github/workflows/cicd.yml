@@ -22,20 +22,20 @@ concurrency:
 permissions: read-all
 
 jobs:
-  get-ruby-version:
-    name: Get Latest Ruby Version
+  get-ruby-versions:
+    name: Get Ruby Versions
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.get-language-versions.outputs.latest-versions }}
+      version-matrix: ${{ steps.get-language-versions.outputs.latest-versions }}
 
     steps:
       - name: Get Required Versions
-        uses: ActionsToolbox/get-language-versions-action@446919617fd774095b5dd3ed71c39dd3fd0d8f4f # v0.1.3
+        uses: ActionsToolbox/get-language-versions-action@446919617fd774095b5dd3ed71c39dd3fd0d8f4f  # v0.1.3
         id: get-language-versions
         with:
           language: "ruby"
-          highest-only: true
           remove-patch-version: true
+          max-versions: 3
 
   shellcheck:
     name: ShellCheck
@@ -50,8 +50,13 @@ jobs:
 
   puppet-lint:
     name: Puppet Lint
-    needs: get-ruby-version
+    needs: get-ruby-versions
     runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-versions: ${{ fromJson(needs.get-ruby-versions.outputs.version-matrix) }}
 
     steps:
       - name: Checkout the Repository
