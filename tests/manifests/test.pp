@@ -1,13 +1,8 @@
-#
-# Top level documentation
-#
-class tests::test
-{
-    #
-    # Service level documentation
-    #
-    service { 'puppet':
-        ensure => running,
-        enable => true,
-    }
+# A minimal Puppet manifest that demonstrates good practices for Puppet Lint: 
+file { '/etc/my_config':
+  ensure  => present,
+  mode    => '0644',
+  owner   => 'root',
+  group   => 'root',
+  content => "This is a simple configuration file.\n",
 }
