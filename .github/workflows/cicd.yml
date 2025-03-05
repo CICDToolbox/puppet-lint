@@ -65,7 +65,7 @@ jobs:
       - name: Setup Ruby ${{ needs.get-ruby-version.outputs.version }}
         uses: ruby/setup-ruby@32110d4e311bd8996b2a82bf2a43b714ccc91777 # v1.221.0
         with:
-          ruby-version: ${{ needs.get-ruby-version.outputs.version }}
+          ruby-version: ${{ matrix.ruby-versions }}
 
       - name: Perform Puppet Lint Analysis
         run: bash <(curl -s https://raw.githubusercontent.com/CICDToolbox/puppet-lint/master/pipeline.sh)
