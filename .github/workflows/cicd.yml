@@ -35,7 +35,8 @@ jobs:
         with:
           language: "ruby"
           remove-patch-version: true
-          max-versions: 3
+          max-versions: 5
+          max-version: 3.3
 
   shellcheck:
     name: ShellCheck
